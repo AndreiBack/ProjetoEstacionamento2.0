@@ -1,64 +1,88 @@
 package br.com.uniamerica.estacionamento.service;
 
-import br.com.uniamerica.estacionamento.controller.ModeloController;
-import br.com.uniamerica.estacionamento.entity.Marca;
-import br.com.uniamerica.estacionamento.entity.Modelo;
-import br.com.uniamerica.estacionamento.entity.Veiculo;
 import br.com.uniamerica.estacionamento.repository.MarcaRepository;
 import br.com.uniamerica.estacionamento.repository.ModeloRepository;
 import br.com.uniamerica.estacionamento.repository.VeiculoRepository;
+import br.com.uniamerica.estacionamento.entity.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.Banner;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class ModeloService {
-    @Autowired
-    private ModeloRepository modeloRepository;
 
-    private Modelo modelo;
     @Autowired
     private MarcaRepository marcaRepository;
     @Autowired
+    private ModeloRepository modeloRepository;
+    @Autowired
     private VeiculoRepository veiculoRepository;
-    @Transactional
-    public void validaCadastro(Modelo modelo) {
-        if (modelo.getMarca() != null && modelo.getMarca().getId() != null) {
-            Optional<Marca> opMarca = marcaRepository.findById(modelo.getMarca().getId());
-            if (!opMarca.isPresent()) {
-                throw new IllegalArgumentException("A marca informada não existe.");
-            }
+
+    @Transactional(rollbackFor = Exception.class)
+    public Modelo newModelo(Modelo modelo) {
+        if (modelo.getMarcaId() == null) {
+            throw new IllegalArgumentException("Marca não informada");
+        }
+        final Marca marca = this.marcaRepository.findById(modelo.getMarcaId().getId())
+                .orElseThrow(() -> new IllegalArgumentException("Marca não existente"));
+        final Marca marcaData = this.marcaRepository.findById(modelo.getMarcaId().getId()).orElse(null);
+        Optional<Modelo> nomeJaCadastrado = modeloRepository.findByNome(modelo.getNome());
+        marca.setAtivo(true);
+
+        if (nomeJaCadastrado.isPresent()){
+            throw new IllegalArgumentException("Já há um modelo cadastrado com esse nome");
+        }else if (modelo.getNome() == null ) {
+            throw new IllegalArgumentException("O nome deve ser preenxido");
+        }else if (modelo.getNome().length() > 50){
+            throw new IllegalArgumentException("O nome não pode ser maior que 50 caracteres");
+        } else if (!modelo.getNome().matches("[a-zA-Z\\s]+")) {
+            throw new IllegalArgumentException("O nome deve conter apenas letras");
+        }
+
+        marcaRepository.save(marca);
+        return modeloRepository.save(modelo);
+    }
+    @Transactional(rollbackFor = Exception.class)
+    public Modelo edicao(Modelo modelo) {
+        if (modelo.getMarcaId() == null) {
+            throw new IllegalArgumentException("Marca não informada");
+        }
+        Optional<Modelo> nomeJaCadastrado = modeloRepository.findByNome(modelo.getNome());
+        LocalDateTime dataCadastro = modelo.getCadastro();
+        if (nomeJaCadastrado.isPresent() && !nomeJaCadastrado.get().getId().equals(modelo.getId())){
+            throw new IllegalArgumentException("Já há um modelo cadastrado com esse nome");
+        }else if (modelo.getNome() == null ) {
+            throw new IllegalArgumentException("O nome deve ser preenxido");
+        }else if (modelo.getNome().length() > 50){
+            throw new IllegalArgumentException("O nome não pode ser maior que 50 caracteres");
+        }else if (!modelo.getNome().matches("[a-zA-Z\\s]+")) {
+            throw new IllegalArgumentException("O nome deve conter apenas letras");
+        } else if (dataCadastro == null){
+            throw new IllegalArgumentException("Por favor informe a data de cadastro");
+        }
+        return modeloRepository.save(modelo);
+    }
+
+
+    @Transactional(rollbackFor = Exception.class)
+    public void deletar(Long id){
+        Modelo modelo = modeloRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Modelo não encontrado"));
+        Marca marca = marcaRepository.findById(modelo.getMarcaId().getId()).orElse(null);
+
+        if (modelo.isAtivo()) {
+            throw new IllegalStateException("Não é possível excluir este modelo pois existem veículos cadastrados com ele.");
         } else {
-            throw new IllegalArgumentException("A marca é obrigatória.");
-        }
-
-
-        String nome = modelo.getNome();
-        if (!nome.matches("[a-z A-Z]+")) {
-            throw new IllegalArgumentException("O nome deve conter apenas letras e não pode ser vazio.");
+            marca.setAtivo(false);
+            marcaRepository.save(marca);
+            modeloRepository.delete(modelo);
         }
     }
-    @Transactional
-    public void validaDelete(Long id){
-        Optional<Modelo> opModelo = modeloRepository.findById(id);
-        if (!opModelo.isPresent()) {
-            throw new IllegalArgumentException("Modelo não encontrado");
-        }
-
-        Modelo modelo = opModelo.get();
-
-        List<Veiculo> veiculos = veiculoRepository.findByModelo(modelo);
-
-        if (!veiculos.isEmpty()) {
-            throw new IllegalArgumentException("Não é possível excluir o modelo, pois existem veículos vinculados a ele");
-        }
-
-        modeloRepository.delete(modelo);
-    }
-
 }
-
