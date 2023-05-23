@@ -2,18 +2,13 @@ package br.com.uniamerica.estacionamento.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import java.math.BigDecimal;
 import java.time.LocalTime;
-import org.hibernate.envers.AuditTable;
-import org.hibernate.envers.Audited;
 @Entity
 @Table(name = "tb_movimentacao", schema = "public")
 public class Movimentacao extends AbstractEntity{
-
     @Getter @Setter
     @Column(name = "entrada", nullable = false)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH'h'mm'm'")
@@ -32,10 +27,11 @@ public class Movimentacao extends AbstractEntity{
     private LocalTime tempo;
     @Getter @Setter
     @Column(name = "tempo_multao")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH'h'mm'm'")
     private LocalTime tempoMulta;
     @Getter @Setter
     @ManyToOne
-    @JoinColumn(name = "veiculo_id", nullable = false)
+    @JoinColumn(name = "veiculo_id")
     private Veiculo veiculo;
     @Getter @Setter
     @ManyToOne
@@ -43,7 +39,7 @@ public class Movimentacao extends AbstractEntity{
     private Configuracao configuracao;
     @Getter @Setter
     @ManyToOne
-    @JoinColumn(name = "condutor_id", nullable = false)
+    @JoinColumn(name = "condutor_id")
     private Condutor condutor;
     @Getter @Setter
     @Column(name = "valor_multa")
@@ -54,4 +50,7 @@ public class Movimentacao extends AbstractEntity{
     @Getter @Setter
     @Column(name = "valor_hora" )
     private BigDecimal valorHora;
+    @Getter @Setter
+    @Column(name = "valor_Desconto" )
+    private BigDecimal valorDesconto = BigDecimal.ZERO;
 }

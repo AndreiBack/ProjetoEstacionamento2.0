@@ -5,11 +5,8 @@ import br.com.uniamerica.estacionamento.repository.ModeloRepository;
 import br.com.uniamerica.estacionamento.repository.VeiculoRepository;
 import br.com.uniamerica.estacionamento.entity.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.Banner;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.GetMapping;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -45,6 +42,7 @@ public class ModeloService {
         } else if (!modelo.getNome().matches("[a-zA-Z\\s]+")) {
             throw new IllegalArgumentException("O nome deve conter apenas letras");
         }
+        modelo.setAtivo(false);
 
         marcaRepository.save(marca);
         return modeloRepository.save(modelo);

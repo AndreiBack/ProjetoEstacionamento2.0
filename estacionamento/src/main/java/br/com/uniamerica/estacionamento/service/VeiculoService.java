@@ -66,6 +66,7 @@ public class VeiculoService {
             throw new IllegalArgumentException("O tipo deve ser um valor válido (CARRO|VAN|MOTO)");
         }
 
+        veiculo.setAtivo(false);
 
         Modelo modelo = modeloRepository.findById(veiculo.getModeloId().getId()).orElse(null);
         modelo.setAtivo(true);

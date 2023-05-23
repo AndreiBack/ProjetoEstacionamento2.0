@@ -1,9 +1,8 @@
 package br.com.uniamerica.estacionamento.controller;
 
 import br.com.uniamerica.estacionamento.repository.MovimentacaoRepository;
-import br.com.uniamerica.estacionamento.entity.Configuracao;
 import br.com.uniamerica.estacionamento.entity.Movimentacao;
-import br.com.uniamerica.estacionamento.service.MovimentaçaoService;
+import br.com.uniamerica.estacionamento.service.MovimentacaoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +15,7 @@ import java.util.List;
 public class MovimentacaoController {
 
     @Autowired
-    private MovimentaçaoService movimentacaoService;
+    private MovimentacaoService movimentacaoService;
     @Autowired
     private MovimentacaoRepository movimentacaoRepository;
 
@@ -51,7 +50,7 @@ public class MovimentacaoController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (DataIntegrityViolationException e) {
-            return ResponseEntity.internalServerError().body( e.getCause().getCause().getMessage());
+            return ResponseEntity.internalServerError().body("Error: " + e.getCause().getCause().getMessage());
         }
     }
 
@@ -62,35 +61,39 @@ public class MovimentacaoController {
             this.movimentacaoService.update(movimentacaos);
             return ResponseEntity.ok(
                     "Data e Hora: " + movimentacao.getCadastro() + "\n" +
-                    "entrada: " + movimentacao.getEntrada() +"\n" +
-                    "saída: " + movimentacao.getSaida() + "\n" +
-                    "Condutor: " + movimentacao.getCondutor().getNome() + " CPF: " + movimentacao.getCondutor().getCpf() + " TELEFONE: " + movimentacao.getCondutor().getTelefone() + "\n" +
-                    "Veiculo: " + movimentacao.getVeiculo().getPlaca() + " MODELO:" + movimentacao.getVeiculo().getModeloId().getNome() + " COR:"+movimentacao.getVeiculo().getCor() + "\n" +
-                    "Quantidade de Horas: " + movimentacao.getTempo() + "\n" +
-                    "Quantidade de Horas Desconto: " + movimentacao.getTempoDesconto() + "\n" +
-                    "Valor a Pagar: R$" + movimentacao.getValorTotal() + "\n" +
-                    "Valor da Multa: " + movimentacao.getValorMulta() + "\n");
+                            "entrada: " + movimentacao.getEntrada() +"\n" +
+                            "saída: " + movimentacao.getSaida() + "\n" +
+                            "Condutor: " + movimentacao.getCondutor().getNome() + " CPF: " + movimentacao.getCondutor().getCpf() + " TELEFONE: "
+                            + movimentacao.getCondutor().getTelefone() + "TEMPO DESCONTO DISPONIVEL: "+ movimentacao.getCondutor().getTempoDesconto() + " Minutos" + "\n" +
+                            "Veiculo: " + movimentacao.getVeiculo().getPlaca() + " MODELO:" + movimentacao.getVeiculo().getModeloId().getNome()
+                            + " COR:"+movimentacao.getVeiculo().getCor() + "\n" +
+                            "Quantidade de Horas: " + movimentacao.getTempo() + "\n" +
+                            "Quantidade de Horas Desconto: " + movimentacao.getTempoDesconto() +"\n" +
+                            "Valor a Pagar: R$" + movimentacao.getValorTotal() + "\n" +
+                            "Valor do Desconto: " + movimentacao.getValorDesconto() + "\n" +
+                            "Valor da Multa: R$" + movimentacao.getValorMulta() + "\n");
         }
         catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (DataIntegrityViolationException e){
-            return ResponseEntity.internalServerError().body( e.getCause().getCause().getMessage());
+            return ResponseEntity.internalServerError().body("Error" + e.getCause().getCause().getMessage());
         }
     }
-
-
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable final Long id) {
         try {
             this.movimentacaoService.delete(id);
-            return ResponseEntity.ok("movimentacao excluída com sucesso");
+            return ResponseEntity.ok("Movimentacao inativado com sucesso");
         }catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (DataIntegrityViolationException e){
-            return ResponseEntity.internalServerError().body( e.getCause().getCause().getMessage());
+            return ResponseEntity.internalServerError().body("Error " + e.getCause().getCause().getMessage());
         } catch (RuntimeException e){
-            return ResponseEntity.internalServerError().body( e.getMessage());
+            return ResponseEntity.internalServerError().body("Error " + e.getMessage());
         }
     }
+
+
+
 }

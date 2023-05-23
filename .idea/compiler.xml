@@ -11,7 +11,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="estacionamento" target="20" />
+      <module name="estacionamento" target="19" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">

@@ -25,12 +25,11 @@ public abstract class AbstractEntity {
 
     @Getter @Setter
     @Column(name = "ativo")
-    private boolean ativo = false;
+    private boolean ativo = true;;
 
     @PrePersist
     private void prePersist(){
         this.cadastro = LocalDateTime.now();
-
     }
     @PreUpdate
     private void preUpdate(){

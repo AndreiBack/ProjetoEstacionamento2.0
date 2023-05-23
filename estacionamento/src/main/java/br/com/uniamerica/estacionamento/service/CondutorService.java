@@ -2,11 +2,11 @@ package br.com.uniamerica.estacionamento.service;
 import br.com.uniamerica.estacionamento.repository.CondutorRepository;
 import br.com.uniamerica.estacionamento.repository.MovimentacaoRepository;
 import br.com.uniamerica.estacionamento.entity.Condutor;
-import br.com.uniamerica.estacionamento.entity.Tipo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.time.LocalTime;
 import java.util.Optional;
 
@@ -28,19 +28,19 @@ public class CondutorService {
         String nome = condutor.getNome();
 
         if (nome == null || !nome.matches("[a-zA-Z\\s]+") || nome.length() > 100) {
-            throw new IllegalArgumentException("O nome deve ter apenas letras e ter menos de 100 caracteres");
+            throw new IllegalArgumentException("O nome deve conter apenas letras e ser menor que 100");
         }
         if (telefone == null || !telefone.matches("\\(\\d{3}\\)\\d{5}-\\d{4}")) {
-            throw new IllegalArgumentException("O telefone deve estar no formato (000)00000-0000");
+            throw new IllegalArgumentException("O telefone deve estar no formato (XXX)XXXXX-XXXX");
         }
         if (cpfJaCadastrado.isPresent()){
             throw new IllegalArgumentException("Já há um condutor cadastrado com esse cpf");
         }else if (cpf == null || !cpf.matches("\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}")) {
-            throw new IllegalArgumentException("O CPF deve estar no formato 000.000.000-00");
+            throw new IllegalArgumentException("O CPF deve estar no formato ___.___.___-__");
         }
-        LocalTime tempoPago = LocalTime.of(0,0);
-        condutor.setTempoPago(tempoPago);
-       return this.condutorRepository.save(condutor);
+        condutor.setAtivo(false);
+
+        return this.condutorRepository.save(condutor);
     }
 
     @Transactional
@@ -53,10 +53,10 @@ public class CondutorService {
         String nome = condutor.getNome();
 
         if (nome == null || !nome.matches("[a-zA-Z\\s]+")) {
-            throw new IllegalArgumentException("O nome deve ter apenas letras e ter menos de 100 caracteres");
+            throw new IllegalArgumentException("O nome deve conter apenas letras ");
         }
-         if (telefone == null || !telefone.matches("\\(\\d{3}\\)\\d{5}-\\d{4}")) {
-            throw new IllegalArgumentException("O telefone deve estar no formato (000)00000-0000");
+        if (telefone == null || !telefone.matches("\\(\\d{2}\\)\\d{5}-\\d{4}")) {
+            throw new IllegalArgumentException("O telefone deve estar no formato (XX)XXXXX-XXXX");
         }
         if (cpfJaCadastrado.isPresent() && !cpfJaCadastrado.get().getId().equals(condutor.getId())){
             throw new IllegalArgumentException("Já há um condutor cadastrado com esse cpf");
@@ -72,10 +72,9 @@ public class CondutorService {
         final Condutor verificacao = this.condutorRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Não foi possível identificar o registro informado"));
         if (verificacao.isAtivo()) {
-                throw new IllegalArgumentException("O condutor está presente em alguma movimentação e não pode ser excluído.");
+            throw new IllegalArgumentException("O condutor está presente em alguma movimentação e não pode ser excluído.");
         } else {
-                this.condutorRepository.delete(verificacao);
+            this.condutorRepository.delete(verificacao);
         }
     }
 }
-

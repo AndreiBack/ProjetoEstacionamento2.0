@@ -1,18 +1,16 @@
 package br.com.uniamerica.estacionamento.entity;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import org.hibernate.envers.AuditTable;
-import org.hibernate.envers.Audited;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.validator.constraints.UniqueElements;
 
 import java.time.LocalTime;
 @Entity
 @Table(name = "tb_condutor", schema = "public")
 public class Condutor extends AbstractEntity{
+
 
 
     @Getter @Setter
@@ -27,14 +25,11 @@ public class Condutor extends AbstractEntity{
     @Column(name = "telefone", nullable = false, length = 20)
     private String telefone;
 
-    @Getter @Setter
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH'h'mm'm'")
-    @Column(name = "tempo_pago")
-    private LocalTime tempoPago = LocalTime.of(0, 0);
 
     @Getter @Setter
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH'h'mm'm'")
+    @Column(name = "tempo_Pago")
+    private Long tempoPago = 0L;
+    @Getter @Setter
     @Column(name = "tempo_desconto")
-    private LocalTime tempoDesconto = LocalTime.of(0, 0);
-
+    private Long tempoDesconto = 0L;
 }
