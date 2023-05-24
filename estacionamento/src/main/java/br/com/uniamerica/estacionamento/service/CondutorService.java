@@ -20,9 +20,9 @@ public class CondutorService {
 
     @Transactional
     public Condutor newCondutor(Condutor condutor){
-
+        Optional<Condutor> idJaCadastrado = condutorRepository.findById(condutor.getId());
         Optional<Condutor> cpfJaCadastrado = condutorRepository.findByCpf(condutor.getCpf());
-
+        Optional<Condutor> telefoneJaCadastrado = condutorRepository.findByTelefone(condutor.getTelefone());
         String cpf = condutor.getCpf();
         String telefone = condutor.getTelefone();
         String nome = condutor.getNome();
@@ -32,12 +32,15 @@ public class CondutorService {
         }
         if (telefone == null || !telefone.matches("\\(\\d{3}\\)\\d{5}-\\d{4}")) {
             throw new IllegalArgumentException("O telefone deve estar no formato (XXX)XXXXX-XXXX");
-        }
-        if (cpfJaCadastrado.isPresent()){
+        }if (telefoneJaCadastrado.isPresent() && !telefoneJaCadastrado.get().getId().equals(condutor.getId())) {
+            throw new IllegalArgumentException("Já há um condutor cadastrado com esse telefone");
+        }if (cpfJaCadastrado.isPresent()){
             throw new IllegalArgumentException("Já há um condutor cadastrado com esse cpf");
         }else if (cpf == null || !cpf.matches("\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}")) {
             throw new IllegalArgumentException("O CPF deve estar no formato ___.___.___-__");
-        }
+        }  if (idJaCadastrado.isPresent()) {
+        throw new IllegalArgumentException("Já há um condutor cadastrado com esse ID");
+    }
         condutor.setAtivo(false);
 
         return this.condutorRepository.save(condutor);
@@ -45,9 +48,9 @@ public class CondutorService {
 
     @Transactional
     public Condutor update(Condutor condutor){
-
+        Optional<Condutor> idJaCadastrado = condutorRepository.findById(condutor.getId());
         Optional<Condutor> cpfJaCadastrado = condutorRepository.findByCpf(condutor.getCpf());
-
+        Optional<Condutor> telefoneJaCadastrado = condutorRepository.findByTelefone(condutor.getTelefone());
         String cpf = condutor.getCpf();
         String telefone = condutor.getTelefone();
         String nome = condutor.getNome();
@@ -57,11 +60,14 @@ public class CondutorService {
         }
         if (telefone == null || !telefone.matches("\\(\\d{2}\\)\\d{5}-\\d{4}")) {
             throw new IllegalArgumentException("O telefone deve estar no formato (XX)XXXXX-XXXX");
-        }
-        if (cpfJaCadastrado.isPresent() && !cpfJaCadastrado.get().getId().equals(condutor.getId())){
+        }if (telefoneJaCadastrado.isPresent() && !telefoneJaCadastrado.get().getId().equals(condutor.getId())) {
+            throw new IllegalArgumentException("Já há um condutor cadastrado com esse telefone");
+        }if (cpfJaCadastrado.isPresent() && !cpfJaCadastrado.get().getId().equals(condutor.getId())){
             throw new IllegalArgumentException("Já há um condutor cadastrado com esse cpf");
         }else if (cpf == null || !cpf.matches("\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}")) {
             throw new IllegalArgumentException("O CPF deve estar no formato XXX.XXX.XXX-XX");
+        }    if (idJaCadastrado.isPresent()) {
+            throw new IllegalArgumentException("Já há um condutor cadastrado com esse ID");
         }
 
         return this.condutorRepository.save(condutor);

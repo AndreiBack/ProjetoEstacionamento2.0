@@ -133,9 +133,7 @@ public class MovimentacaoService {
         vd = BigDecimal.valueOf(tdem).multiply(valorPorMinuto);
         movimentacao.setValorDesconto(vd);
 
-        if (tdem > td) {
-            throw new IllegalArgumentException("Tempo excedente do permitido");
-        }
+
         valorTotal = valorTotal.subtract(vd);
         td = td - tdem;
 

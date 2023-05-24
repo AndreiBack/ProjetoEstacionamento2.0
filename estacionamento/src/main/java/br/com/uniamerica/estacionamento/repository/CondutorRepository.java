@@ -15,4 +15,6 @@ public interface CondutorRepository extends JpaRepository<Condutor, Long> {
 
      List<Condutor> findByAtivoTrue();
      Optional<Condutor> findByCpf(String cpf);
+
+    Optional<Condutor> findByTelefone(String telefone);
 }

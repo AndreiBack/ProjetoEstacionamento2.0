@@ -73,13 +73,16 @@ public class ModeloController {
     public ResponseEntity<?> deletar(@PathVariable Long id) {
         try {
             modeloService.deletar(id);
-            return ResponseEntity.ok("Modelo excluido com sucesso");
+            return ResponseEntity.ok("Modelo excluído com sucesso");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
         } catch (IllegalStateException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Não é possível excluir este modelo pois existem veículos cadastrados com ele.");
         }
     }
+
 
 
 }

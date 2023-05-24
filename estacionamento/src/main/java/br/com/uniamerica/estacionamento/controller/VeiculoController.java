@@ -85,7 +85,7 @@ public class VeiculoController {
             this.veiculoService.delete(id);
             return ResponseEntity.ok("veiculo excluído com sucesso");
         } catch (DataIntegrityViolationException  e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body("O Veiculo está presente em alguma movimentação e não pode ser excluído.");
         } catch (RuntimeException e){
             return ResponseEntity.internalServerError().body( e.getMessage());
         }

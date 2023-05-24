@@ -53,32 +53,33 @@ public class MovimentacaoController {
             return ResponseEntity.internalServerError().body("Error: " + e.getCause().getCause().getMessage());
         }
     }
-
-    @PutMapping("/finalizar/{id}")
-    public ResponseEntity<?> finalizar(@PathVariable("id") final Long id, @RequestBody final Movimentacao movimentacaos){
-        try{
+@PutMapping("/finalizar/{id}")
+    public ResponseEntity<?> finalizar(@PathVariable("id") final Long id, @RequestBody final Movimentacao movimentacaos) {
+        try {
             final Movimentacao movimentacao = this.movimentacaoRepository.findById(id).orElse(null);
             this.movimentacaoService.update(movimentacaos);
-            return ResponseEntity.ok(
-                    "Data e Hora: " + movimentacao.getCadastro() + "\n" +
-                            "entrada: " + movimentacao.getEntrada() +"\n" +
-                            "saída: " + movimentacao.getSaida() + "\n" +
-                            "Condutor: " + movimentacao.getCondutor().getNome() + " CPF: " + movimentacao.getCondutor().getCpf() + " TELEFONE: "
-                            + movimentacao.getCondutor().getTelefone() + "TEMPO DESCONTO DISPONIVEL: "+ movimentacao.getCondutor().getTempoDesconto() + " Minutos" + "\n" +
-                            "Veiculo: " + movimentacao.getVeiculo().getPlaca() + " MODELO:" + movimentacao.getVeiculo().getModeloId().getNome()
-                            + " COR:"+movimentacao.getVeiculo().getCor() + "\n" +
-                            "Quantidade de Horas: " + movimentacao.getTempo() + "\n" +
-                            "Quantidade de Horas Desconto: " + movimentacao.getTempoDesconto() +"\n" +
-                            "Valor a Pagar: R$" + movimentacao.getValorTotal() + "\n" +
-                            "Valor do Desconto: " + movimentacao.getValorDesconto() + "\n" +
-                            "Valor da Multa: R$" + movimentacao.getValorMulta() + "\n");
-        }
-        catch (IllegalArgumentException e) {
+            return ResponseEntity.ok("Data e Hora: " + movimentacao.getCadastro() + "\n" +
+                    "entrada: " + movimentacao.getEntrada() + "\n" +
+                    "saída: " + movimentacao.getSaida() + "\n" +
+                    "Condutor: " + movimentacao.getCondutor().getNome() + " CPF: " + movimentacao.getCondutor().getCpf() + " TELEFONE: "
+                    + movimentacao.getCondutor().getTelefone() + "TEMPO DESCONTO DISPONIVEL: " + movimentacao.getCondutor().getTempoDesconto() + " Minutos" + "\n" +
+                    "Veiculo: " + movimentacao.getVeiculo().getPlaca() + " MODELO:" + movimentacao.getVeiculo().getModeloId().getNome()
+                    + " COR:" + movimentacao.getVeiculo().getCor() + "\n" +
+                    "Quantidade de Horas: " + movimentacao.getTempo() + "\n" +
+                    "Quantidade de Horas Desconto: " + movimentacao.getTempoDesconto() + "\n" +
+                    "Valor a Pagar: R$" + movimentacao.getValorTotal() + "\n" +
+                    "Valor do Desconto: " + movimentacao.getValorDesconto() + "\n" +
+                    "Valor da Multa: R$" + movimentacao.getValorMulta() + "\n");
+        } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
-        } catch (DataIntegrityViolationException e){
-            return ResponseEntity.internalServerError().body("Error" + e.getCause().getCause().getMessage());
+        } catch (DataIntegrityViolationException e) {
+            return ResponseEntity.internalServerError().body("Error: " + e.getCause().getCause().getMessage());
+        } catch (Exception e) {
+            // Tratamento genérico para outros tipos de exceção
+            return ResponseEntity.internalServerError().body("\"Erro no servidor ou algum dado está faltando,, sendo eles: \"id\" \"cadastro\" \"entrada\" \"saida\"  \"tempoDesconto\" \"veiculo\" \"configuracao\" \"condutor\"");
         }
     }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable final Long id) {
