@@ -48,7 +48,7 @@ public class MovimentacaoController {
             this.movimentacaoService.cadastrar(movimentacao);
             return ResponseEntity.ok("Registro cadastrado com sucesso");
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body("Algum dado está incorreto ou faltando. ERRO BAD REQUEST");
         } catch (DataIntegrityViolationException e) {
             return ResponseEntity.internalServerError().body("Error: " + e.getCause().getCause().getMessage());
         }
@@ -71,12 +71,12 @@ public class MovimentacaoController {
                     "Valor do Desconto: " + movimentacao.getValorDesconto() + "\n" +
                     "Valor da Multa: R$" + movimentacao.getValorMulta() + "\n");
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body("Algum dado está incorreto ou faltando. ERRO BAD REQUEST");
         } catch (DataIntegrityViolationException e) {
             return ResponseEntity.internalServerError().body("Error: " + e.getCause().getCause().getMessage());
         } catch (Exception e) {
             // Tratamento genérico para outros tipos de exceção
-            return ResponseEntity.internalServerError().body("\"Erro no servidor ou algum dado está faltando,, sendo eles: \"id\" \"cadastro\" \"entrada\" \"saida\"  \"tempoDesconto\" \"veiculo\" \"configuracao\" \"condutor\"");
+            return ResponseEntity.internalServerError().body("\"Erro no servidor ou algum dado está faltando,, sendo eles: \"id\" \"cadastro\" \"entrada\" \"saida\"  \"tempoDesconto\" \"veiculo\" \"configuracao\" \"condutor\" \" ");
         }
     }
 

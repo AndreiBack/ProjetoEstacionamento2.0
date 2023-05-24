@@ -31,8 +31,9 @@ public class ConfiguracaoController {
         try{
             this.configuracaoRepository.save(configuracao);
             return ResponseEntity.ok("Registro cadastrado com sucesso");
-        }
-        catch (DataIntegrityViolationException e){
+        }catch (DataIntegrityViolationException  e) {
+            return ResponseEntity.badRequest().body("Algum dado está incorreto ou faltando. ERRO BAD REQUEST");
+        }catch (RuntimeException e){
             return ResponseEntity.internalServerError().body( e.getCause().getCause().getMessage());
         }
     }

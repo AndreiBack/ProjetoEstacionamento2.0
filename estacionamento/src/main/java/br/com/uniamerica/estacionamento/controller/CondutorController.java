@@ -99,9 +99,9 @@ public class CondutorController {
             this.condutorService.delete(id);
             return ResponseEntity.ok("Condutor excluído com sucesso");
         }  catch (DataIntegrityViolationException  e) {
-            return ResponseEntity.badRequest().body("O Condutor está presente em alguma movimentação e não pode ser excluído.");
-        } catch (RuntimeException e){
             return ResponseEntity.internalServerError().body( e.getMessage());
+        } catch (RuntimeException e){
+            return ResponseEntity.badRequest().body("Algum dado está incorreto ou faltando. ERRO BAD REQUEST");
         }
     }
 }

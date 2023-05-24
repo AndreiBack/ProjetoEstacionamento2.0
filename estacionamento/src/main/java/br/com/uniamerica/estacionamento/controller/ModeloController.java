@@ -49,7 +49,7 @@ public class ModeloController {
             this.modeloService.newModelo(modelo);
             return ResponseEntity.ok("Registro cadastrado com sucesso");
         }catch (DataIntegrityViolationException e){
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body("Algum dado está incorreto ou faltando. ERRO BAD REQUEST");
         } catch (RuntimeException e){
             return ResponseEntity.internalServerError().body(e.getMessage());
         }

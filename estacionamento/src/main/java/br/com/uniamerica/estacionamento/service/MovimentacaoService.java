@@ -116,7 +116,7 @@ public class MovimentacaoService {
 
         /*SALVA O TEMPO PAGO NO CONDUTOR*/
         long tp = condutor.getTempoPago();
-        tp += eemSubSem;
+        tp += hrsTempo;
         condutor.setTempoPago(tp);
 
         /*SALVA O TEMPO DESCONTO DO CONDUTOR*/
@@ -155,11 +155,13 @@ public class MovimentacaoService {
         Optional<Movimentacao> optionalMovimentacao = movimentacaoRepository.findById(id);
         if (optionalMovimentacao.isPresent()) {
             Movimentacao movimentacao = optionalMovimentacao.get();
+
             if (movimentacao.getSaida() != LocalTime.of(0,0)) {
+
                 movimentacao.setAtivo(false);
                 movimentacaoRepository.save(movimentacao);
             } else {
-                throw new IllegalArgumentException("Não é possível inativala uma movimentação sem data de saída preenchida");
+                throw new IllegalArgumentException("Não é possível inativar uma movimentação sem data de saída preenchida");
             }
         } else {
             throw new IllegalArgumentException("movimentação não encontrada");

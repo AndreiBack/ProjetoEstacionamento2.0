@@ -48,7 +48,7 @@ public class MarcaController {
             this.marcaService.newMarca(marca);
             return ResponseEntity.ok("Marca cadastrada com sucesso");
         } catch (DataIntegrityViolationException e){
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body("Algum dado está incorreto ou faltando. ERRO BAD REQUEST");
         } catch (RuntimeException e){
             return ResponseEntity.internalServerError().body(e.getMessage());
         }
@@ -58,9 +58,9 @@ public class MarcaController {
     public ResponseEntity<?> uddate(@PathVariable ("id") Long id ,@RequestBody final Marca marca ){
         try {
             final Marca verificacao = this.marcaRepository.findById(id)
-                    .orElseThrow(() -> new IllegalArgumentException("Não foi possível identificar o registro informado"));
+                    .orElseThrow(() -> new IllegalArgumentException("Não foi possível identificar a marca informada"));
             this.marcaService.update(marca);
-            return ResponseEntity.ok("Registro editado com sucesso");
+            return ResponseEntity.ok("Marca editada com sucesso");
         } catch (DataIntegrityViolationException e){
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (RuntimeException e){
@@ -72,7 +72,7 @@ public class MarcaController {
     public ResponseEntity<?> delete(@PathVariable ("id") Long id){
         try {
             this.marcaService.delete(id);
-            return ResponseEntity.ok("Registro deletado com sucesso");
+            return ResponseEntity.ok("Marca deletada com sucesso");
         } catch (DataIntegrityViolationException  e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (RuntimeException e){
